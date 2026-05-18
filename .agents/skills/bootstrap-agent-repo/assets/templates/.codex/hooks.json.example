@@ -1,0 +1,8 @@
+{
+  "beforeTool": [
+    {
+      "matcher": "*",
+      "command": "python3 scripts/hooks/codex_before_tool.py"
+    }
+  ]
+}

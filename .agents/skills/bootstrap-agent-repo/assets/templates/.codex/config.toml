@@ -1,0 +1,19 @@
+# Project-scoped Codex configuration
+
+model = "gpt-5.5"
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+project_root_markers = [".git", ".hg", ".sl"]
+project_doc_fallback_filenames = ["AGENT_RULES.md"]
+project_doc_max_bytes = 65536
+
+[features]
+multi_agent = true
+hooks = false
+memories = false
+
+# Example MCP server block (fill in or remove)
+#[mcp_servers.docs]
+#command = "npx"
+#args = ["-y", "@modelcontextprotocol/server-filesystem", "."]
+#enabled = false
