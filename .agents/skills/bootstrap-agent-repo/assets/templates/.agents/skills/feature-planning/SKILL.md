@@ -36,6 +36,7 @@ metadata:
 19. レビュー、検証、commit / merge まで終わった場合のみ `State: Completed` にする
 20. 曖昧な点は `Assumptions` として明記する
 21. agent 間の役割分担がある場合は `Collaboration split`, `Ownership and coordination`, `Routing and execution` に残す
+22. `Draft`, `planning-only`, primary executor 未定、planned files 未定、または locked files 未解除の plan は実装可能として扱わない。曖昧な `Implement the plan` 指示では non-plan file を編集せず、先に実装対象 scope と routing を確認・更新する
 
 ## Output requirements
 
@@ -49,6 +50,7 @@ metadata:
 - 触らない範囲を明示する
 - ownership area を明示する
 - `Routing and execution` を埋める
+- 実装可能条件を満たさない plan では non-plan file を編集しない
 - 他agentへの依頼事項を明示する
 - conflict risk を評価する
 - scope expansion が必要になった場合の報告方法を書く

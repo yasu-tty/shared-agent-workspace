@@ -20,3 +20,4 @@ allowed-tools: Read(*),Edit(*),Write(*),Glob(*),Grep(*),Bash(git status),Bash(gi
 8. Include or update `## Status` according to `.agents/PLANS.md`; use `Implementation complete` before final review, validation, commit, or merge is done
 9. Fill `Routing and execution`; check agent availability, do not auto-route work, and record execution mode, parallel allowance, file ownership claims, locked files, handoff checkpoint, and routing notes
 10. Capture ownership area, planned files, out-of-scope files, affected agents, review owner, conflict risk, handoff notes, scope expansion rule, tests, and rollback
+11. Treat `Draft`, `planning-only`, executorless, file-ambiguous, or locked plans as non-executable; do not edit non-plan files from an ambiguous `Implement the plan` instruction until scope and routing are confirmed in the plan

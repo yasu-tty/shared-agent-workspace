@@ -151,6 +151,20 @@
 - Routing decision notes:
 ```
 
+## Executable plan precondition
+
+以下のいずれかに該当する plan は、実装可能な plan として扱わない。
+
+- `State: Draft`
+- `Selected mode: planning-only`
+- `Primary executor: None` または未記入
+- 実装対象外または locked files に non-plan files が含まれ、解除条件が明記されていない
+- planned files が未記入、または実装対象ファイルが曖昧
+
+この状態の plan に対して `Implement the plan` などの曖昧な実装指示が出た場合、agent は non-plan file を編集してはならない。先に、実装対象 scope、planned files、primary executor、locked files の解除、validation、rollback を確認し、plan を実装可能な状態に更新する。
+
+ユーザーが特定 plan を明示して「実装を開始してください」と指示した場合でも、上記の実装可能条件を plan に記録してから shared policy、template、source file などの non-plan file を編集する。
+
 ## Parallel execution deny conditions
 
 以下のどれかに該当する場合、parallel execution は禁止するか `separate-worktrees-only` にする。
@@ -179,6 +193,7 @@
 
 - 各 plan は冒頭付近に `## Status` を持つ
 - `## Status` は現在状態の正本である
+- `Draft` は検討中であり、non-plan file の実装許可ではない
 - Progress log は履歴であり、現在状態の代替にしない
 - 実装が終わっても、レビュー・検証・commit / merge が未完了なら `Completed` ではなく `Implementation complete` にする
 - `Completed` にする場合は、`Result` と `Completed` 日付を埋める
@@ -192,6 +207,7 @@
 - 変更予定ファイルと触らないファイルを実装前に明記する
 - 複数 agent が同じファイルを触る可能性がある場合は、実装前に ownership と planned files を確認する
 - `## Routing and execution` で agent availability、execution mode、parallel execution allowed、file ownership claims、locked files を実装前に確認して記録する
+- `planning-only`、primary executor 未定、または locked files が未解除の plan は、実装前に実装可能条件を更新する
 - coordination gate の詳細は `docs/agent/COORDINATION_GATE.md` を正とする
 - agent availability が明示されていない場合は plan 作成時にユーザーへ確認する。ただし、ユーザーが `Codex only`, `Claude only`, `Claude review only` などを明示している場合は再質問しない
 - 片方の agent が `unavailable` または `unknown` の場合、自動でその agent に実装を割り当てない

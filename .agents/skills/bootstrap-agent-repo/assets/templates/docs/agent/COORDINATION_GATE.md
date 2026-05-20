@@ -53,6 +53,20 @@ Multiple agents may work at the same time only when planned files are clearly se
 
 The plan is created, but implementation ownership is not decided. Use this when agent availability is unknown or a user decision is required.
 
+## Implementation ambiguity gate
+
+Before editing any non-plan file, confirm that the active plan is executable. A plan is not executable when any of these are true:
+
+- `State` is `Draft`
+- selected execution mode is `planning-only`
+- primary executor is `None`, blank, or undecided
+- planned files are blank or do not identify the non-plan files to edit
+- locked files include the target non-plan files and the plan does not record an explicit unlock decision
+
+If a non-executable plan receives an ambiguous instruction such as "Implement the plan", do not edit non-plan files. First confirm the exact implementation scope and update the plan with execution mode, primary executor, planned files, locked files, validation, and rollback.
+
+If the user explicitly names a plan and asks to start implementation, record that approval in the plan before editing shared policy, templates, source files, or other non-plan files.
+
 ## Availability rules
 
 - If agent availability is not stated, the planner must ask during plan creation.
