@@ -31,11 +31,20 @@
   - `plans/`
   - `docs/agent/`
   - `.mcp.json.example`
+- 導入先 repo 管理:
+  - `README.md`
+    - repo 本体の説明として扱う
+    - bootstrap は作成・上書きしない
+  - `docs/agent/PROJECT_CONTEXT.md`
+    - bootstrap は未作成時に作成する
+    - 再適用時は `preserve` として扱い、`--force` でも上書きしない
 
 ## Safety defaults
 
 - hooks, MCP, local settings は `.example` を優先する
 - 既存ファイルはデフォルトで上書きしない
+- root `README.md` は配布テンプレートに含めず、bootstrap では作成・上書きしない
+- project-owned create-only files は `--force` でも上書きしない
 - 強い副作用がある操作は明示実行前提
 - bootstrap の再適用は `--force --backup` を使う
 - template source tree に symlink がある場合は拒否する
@@ -44,6 +53,7 @@
 ## Operational model
 
 - 新規 repo では dry-run 後に `--yes` で適用する
-- 既存 repo では skip / identical / overwrite の結果を確認してから `--force` を使う
+- 既存 repo では skip / identical / overwrite の結果を確認し、root `README.md` が対象に含まれないことを確認してから `--force` を使う
+- `preserve` は project-owned file が意図通り保持されたことを示す
 - 共有できる規約や plan は共通コアに戻す
 - 個人差分、権限が強い設定、環境依存の設定は nonshared sample に留める

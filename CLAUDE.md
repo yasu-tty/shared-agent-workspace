@@ -2,6 +2,7 @@
 
 @AGENT_RULES.md
 @docs/agent/COMPONENT_INVENTORY.md
+@docs/agent/PROJECT_CONTEXT.md
 @docs/agent/SETUP.md
 @docs/agent/OWNERSHIP.md
 @docs/agent/AGENT_ROLES.md
@@ -14,6 +15,7 @@
 ## Claude-specific guidance
 
 - shared rules は `AGENT_RULES.md` と `.agents/PLANS.md` を正とする
+- repo 固有コンテキストは `docs/agent/PROJECT_CONTEXT.md` を確認する
 - 複雑な変更では、先に `plans/*.md` を作成または更新する
 - 計画書の形式は `.agents/PLANS.md` に従う
 - Plan status rules are defined in `.agents/PLANS.md`; `Completed` はレビュー、検証、commit / merge まで終わった場合だけ使う

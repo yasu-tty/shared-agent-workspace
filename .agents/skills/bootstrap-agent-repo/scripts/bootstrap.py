@@ -15,8 +15,12 @@ EXCLUDE_FROM_SELF_INSTALL = {
     ".mypy_cache",
 }
 
-INTENTIONAL_ROOT_TEMPLATE_CONTENT_DIFFS = {
+NON_DISTRIBUTED_TEMPLATE_PATHS = {
     "README.md",
+}
+
+PROJECT_OWNED_CREATE_ONLY_PATHS = {
+    "docs/agent/PROJECT_CONTEXT.md",
 }
 
 
@@ -67,6 +71,11 @@ def check_root_sync(repo_root: Path, templates_dir: Path) -> int:
     for source in iter_files(templates_dir):
         rel_path = source.relative_to(templates_dir)
         rel = as_posix(rel_path)
+        if rel in NON_DISTRIBUTED_TEMPLATE_PATHS:
+            print(f"FORBIDDEN_TEMPLATE {rel}")
+            mismatches += 1
+            continue
+
         root_file = repo_root / rel_path
 
         if not root_file.exists():
@@ -85,8 +94,8 @@ def check_root_sync(repo_root: Path, templates_dir: Path) -> int:
             continue
 
         if root_file.read_bytes() != source.read_bytes():
-            if rel in INTENTIONAL_ROOT_TEMPLATE_CONTENT_DIFFS:
-                print(f"INTENTIONAL_DIFF {rel}")
+            if rel in PROJECT_OWNED_CREATE_ONLY_PATHS:
+                print(f"PROJECT_OWNED_DIFF {rel}")
                 continue
             print(f"DIFF {rel}")
             mismatches += 1
@@ -116,6 +125,9 @@ def build_plan(
 
         rel_path = prefix / source.relative_to(source_root)
         rel = as_posix(rel_path)
+        if rel in NON_DISTRIBUTED_TEMPLATE_PATHS:
+            continue
+
         if not should_copy(rel, includes, excludes):
             continue
 
@@ -129,6 +141,10 @@ def build_plan(
 
         if target.is_dir():
             plans.append(CopyPlan(rel, source, target, "skip", "target is a directory"))
+            continue
+
+        if rel in PROJECT_OWNED_CREATE_ONLY_PATHS:
+            plans.append(CopyPlan(rel, source, target, "preserve", "project-owned; never overwritten"))
             continue
 
         if target.read_bytes() == source.read_bytes():
@@ -182,7 +198,7 @@ def print_plan(plans: list[CopyPlan], *, mode: str, target_dir: Path, backup_roo
     if backup_root is not None:
         print(f"backup_dir={backup_root}")
 
-    for action in ("create", "overwrite", "identical", "skip"):
+    for action in ("create", "overwrite", "identical", "preserve", "skip"):
         print(f"{action}={counts.get(action, 0)}")
 
     for plan in plans:
@@ -190,6 +206,7 @@ def print_plan(plans: list[CopyPlan], *, mode: str, target_dir: Path, backup_roo
             "create": "+",
             "overwrite": "!",
             "identical": "=",
+            "preserve": "~",
             "skip": "-",
         }[plan.action]
         print(f"  {marker} {plan.rel} ({plan.reason})")
@@ -240,7 +257,10 @@ def main() -> int:
 
     if args.list:
         for source in iter_files(templates_dir):
-            print(as_posix(source.relative_to(templates_dir)))
+            rel = as_posix(source.relative_to(templates_dir))
+            if rel in NON_DISTRIBUTED_TEMPLATE_PATHS:
+                continue
+            print(rel)
         if not args.no_self_skill:
             for source in iter_files(skill_dir):
                 if "assets/templates/.agents/skills/bootstrap-agent-repo" in as_posix(source):

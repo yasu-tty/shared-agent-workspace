@@ -14,7 +14,7 @@ python3 .agents/skills/bootstrap-agent-repo/scripts/bootstrap.py --target . --ye
 python3 .agents/skills/bootstrap-agent-repo/scripts/bootstrap.py --target . --dry-run
 ```
 
-Dry-run has no filesystem side effects. It also reports whether files would be created, overwritten, skipped, or left unchanged.
+Dry-run has no filesystem side effects. It also reports whether files would be created, overwritten, preserved, skipped, or left unchanged.
 
 ## Reapply standards
 
@@ -33,9 +33,13 @@ python3 .agents/skills/bootstrap-agent-repo/scripts/bootstrap.py --target . --fo
 python3 .agents/skills/bootstrap-agent-repo/scripts/bootstrap.py --target . --dry-run
 ```
 
-Review the dry-run output before applying. After `--force --backup --yes`, compare `.agents/bootstrap-backups/<timestamp>/` with the overwritten files and confirm that repo-specific information was not erased by generic template content.
+Review the dry-run output before applying. Confirm that the target root `README.md` is not listed for create or overwrite. After `--force --backup --yes`, compare `.agents/bootstrap-backups/<timestamp>/` with the overwritten files and confirm that `docs/agent/PROJECT_CONTEXT.md` remained preserved.
 
-If the reapply reveals changes that should become part of the shared distribution, move those edits into `assets/templates/`. If a difference must remain only in the root repo because it is repo-specific, keep it out of `assets/templates/` and record that intentional drift in the active plan or repository docs.
+`docs/agent/PROJECT_CONTEXT.md` is project-owned. Bootstrap creates it when missing, then reports it as `preserve` on later runs and never overwrites it, even with `--force`.
+
+The target root `README.md` is project-owned and is not distributed by bootstrap.
+
+Keep repository-specific context in `docs/agent/PROJECT_CONTEXT.md`. Treat other unexpected differences as template maintenance work.
 
 ## Copy a subset
 
@@ -58,17 +62,20 @@ python3 .agents/skills/bootstrap-agent-repo/scripts/bootstrap.py --target . --li
 python3 .agents/skills/bootstrap-agent-repo/scripts/bootstrap.py --target . --check-root-sync
 ```
 
-Use this in review or CI when maintaining this template repo. It compares files in `assets/templates/` with their root counterparts and reports `MISSING`, `DIFF`, `INTENTIONAL_DIFF`, `SYMLINK`, or `NOT_FILE`.
+Use this in review or CI when maintaining this template repo. It compares files in `assets/templates/` with their root counterparts and reports `MISSING`, `DIFF`, `FORBIDDEN_TEMPLATE`, `PROJECT_OWNED_DIFF`, `SYMLINK`, or `NOT_FILE`.
 
-`DIFF` is normally a maintenance failure for this template repo. The exception is an intentional root-only customization that should not be distributed generically; when that happens, leave the file out of `assets/templates/` and document the drift explicitly so later maintainers do not mistake it for an accidental sync miss.
+`DIFF` is normally a maintenance failure for this template repo. Only move a change into `assets/templates/` when it is generic, shareable, and intended for all adopting repositories. Move repository-specific context into `docs/agent/PROJECT_CONTEXT.md`. Only documented exceptions such as `PROJECT_OWNED_DIFF docs/agent/PROJECT_CONTEXT.md` should remain.
 
-`README.md` is an intentional content-diff exception. The root `README.md` describes this public project, while `assets/templates/README.md` is starter content that may be installed into a target repository. `--check-root-sync` reports this as `INTENTIONAL_DIFF README.md` and does not fail for that content difference. Missing files, symlinks, directories, and all non-README content differences still fail.
+`FORBIDDEN_TEMPLATE README.md` means root `README.md` was added back to distributed templates. Remove `assets/templates/README.md`; bootstrap must not create or overwrite an adopting repository's root README.
+
+`docs/agent/PROJECT_CONTEXT.md` is a project-owned content-diff exception. The file must exist in both root and `assets/templates/`, but root content may diverge from the section-only template stub. `--check-root-sync` reports this as `PROJECT_OWNED_DIFF docs/agent/PROJECT_CONTEXT.md` and does not fail for that content difference. Missing files, symlinks, and directories still fail.
 
 ## What gets installed
 
 - `AGENT_RULES.md`
 - `AGENTS.md`
 - `CLAUDE.md`
+- `docs/agent/PROJECT_CONTEXT.md`
 - `.agents/PLANS.md`
 - `.agents/skills/bootstrap-agent-repo/`
 - `.agents/skills/feature-planning/`
@@ -89,6 +96,8 @@ Use this in review or CI when maintaining this template repo. It compares files 
 ## Safety
 
 - Existing files are never overwritten unless `--force` is passed.
+- The target root `README.md` is never created or overwritten by bootstrap.
+- Project-owned create-only files such as `docs/agent/PROJECT_CONTEXT.md` are never overwritten and are reported as `preserve`.
 - Identical files are reported as `identical` and are not rewritten.
 - Overwritten files can be backed up with `--backup` under a UTC timestamp with microsecond precision.
 - The script refuses writes outside the target path.

@@ -1,7 +1,9 @@
 # Post Bootstrap Checklist
 
-- [ ] `AGENT_RULES.md` を技術スタックとチーム運用向けに具体化した
+- [ ] `AGENT_RULES.md` は共通規約の正本として扱い、repo 固有コンテキストを書いていないことを確認した
 - [ ] `docs/agent/COMPONENT_INVENTORY.md` が実際に採用する adapter と一致している
+- [ ] `docs/agent/PROJECT_CONTEXT.md` に repo 固有コンテキストを記録した
+- [ ] `docs/agent/PROJECT_CONTEXT.md` に導入先 repo のデータ取扱方針を記録し、共有すべきでない値を含めていないことを確認した
 - [ ] `docs/agent/OWNERSHIP.md` の repository consumers と ownership matrix を repo 用に更新した
 - [ ] `docs/agent/AGENT_ROLES.md` の placeholder role を multi-agent work 前に割り当てた
 - [ ] parallel coding 前に `docs/agent/HANDOFF_PROTOCOL.md` の start/progress/completion/conflict protocol を確認した
@@ -14,7 +16,7 @@
 - [ ] `templates/nonshared/` から採用するものを選び、共有 repo に直接入れないものを確認した
 - [ ] 不要な adapter や skill を削除または簡略化した
 - [ ] 最初の案件 plan を `plans/` に作成した
-- [ ] `python3 .agents/skills/bootstrap-agent-repo/scripts/bootstrap.py --target . --dry-run` が期待通り `identical` または意図した差分だけを示す
+- [ ] `python3 .agents/skills/bootstrap-agent-repo/scripts/bootstrap.py --target . --dry-run` が期待通り `identical`, `preserve`, または意図した差分だけを示し、root `README.md` を create / overwrite 対象に含めていない
 - [ ] 既存 repo に `--force --backup --yes` で再適用した場合は、`.agents/bootstrap-backups/<timestamp>/` と更新後ファイルを比較し、repo 固有情報が消えていないことを確認した
-- [ ] 再適用後に必要な汎用変更は `assets/templates/` へ移し、repo 固有変更は root 側だけに残す方針で切り分けた
-- [ ] `python3 .agents/skills/bootstrap-agent-repo/scripts/bootstrap.py --target . --check-root-sync` の結果を確認し、意図的な root 固有差分がある場合は plan または docs に記録した
+- [ ] 再適用後も repo 固有コンテキストは `docs/agent/PROJECT_CONTEXT.md` に集約されていることを確認した
+- [ ] `python3 .agents/skills/bootstrap-agent-repo/scripts/bootstrap.py --target . --check-root-sync` の結果を確認し、`PROJECT_OWNED_DIFF docs/agent/PROJECT_CONTEXT.md` 以外の `DIFF` は template repo のメンテナンス対象として扱った。`FORBIDDEN_TEMPLATE README.md` が出た場合は `assets/templates/README.md` を削除した

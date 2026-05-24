@@ -74,15 +74,16 @@
 
 1. `AGENT_RULES.md`
 2. `docs/agent/COMPONENT_INVENTORY.md`
-3. `docs/agent/SETUP.md`
-4. `docs/agent/OWNERSHIP.md`
-5. `docs/agent/AGENT_ROLES.md`
-6. `docs/agent/HANDOFF_PROTOCOL.md`
-7. `docs/agent/COORDINATION_GATE.md`
-8. `.agents/PLANS.md`
-9. `plans/README.md`
-10. 関連する `plans/*.md`
-11. `docs/agent/TESTING_POLICY.md`
-12. agent 固有の入口ファイル (`AGENTS.md`, `CLAUDE.md`)
+3. `docs/agent/PROJECT_CONTEXT.md`
+4. `docs/agent/SETUP.md`
+5. `docs/agent/OWNERSHIP.md`
+6. `docs/agent/AGENT_ROLES.md`
+7. `docs/agent/HANDOFF_PROTOCOL.md`
+8. `docs/agent/COORDINATION_GATE.md`
+9. `.agents/PLANS.md`
+10. `plans/README.md`
+11. 関連する `plans/*.md`
+12. `docs/agent/TESTING_POLICY.md`
+13. agent 固有の入口ファイル (`AGENTS.md`, `CLAUDE.md`)
 
 `docs/agent/TESTING_POLICY.md` は共通参照順に含める。特にテスト方針・検証方針を変更する作業、または validation 判断を伴う作業では必ず確認する。

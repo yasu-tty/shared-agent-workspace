@@ -17,7 +17,7 @@
 - `feature-planning` skill で、scope、ownership、routing、validation、rollback を実装前に明文化する
 - 危険な設定や個人設定は `.example` や `templates/nonshared/` に分離する
 
-## 初回導入
+## 導入
 
 1. 管理対象プロジェクトに必要な skill をコピーする
 
@@ -32,6 +32,15 @@
 
 ```text
 以下を読んだうえで、このプロジェクトに協調コーディング用の構成を導入してください。
+
+- .agents/skills/bootstrap-agent-repo/SKILL.md
+- .agents/skills/feature-planning/SKILL.md
+```
+
+既存 repo に再適用する場合:
+
+```text
+以下を読んだうえで、dry-run で差分を確認し、root README.md が対象に含まれず、docs/agent/PROJECT_CONTEXT.md が preserve されることを確認してから、協調コーディング用の構成を再適用してください。
 
 - .agents/skills/bootstrap-agent-repo/SKILL.md
 - .agents/skills/feature-planning/SKILL.md
@@ -53,6 +62,7 @@
 - `.agents/PLANS.md`
 - `plans/`
 - `docs/agent/`
+- `docs/agent/PROJECT_CONTEXT.md`
 - `docs/agent/OWNERSHIP.md`
 - `docs/agent/AGENT_ROLES.md`
 - `docs/agent/HANDOFF_PROTOCOL.md`
@@ -95,32 +105,41 @@
 - 計画の仕様は `.agents/PLANS.md`
 - 参照者・責務分担・handoff は `docs/agent/OWNERSHIP.md`, `docs/agent/AGENT_ROLES.md`, `docs/agent/HANDOFF_PROTOCOL.md`
 - plan 起票時は `docs/agent/COORDINATION_GATE.md` で agent availability と execution mode を確認・記録する
+- repo 固有コンテキストは `docs/agent/PROJECT_CONTEXT.md` に置き、agent は作業前に確認する
 - repo への導入・再適用は `bootstrap-agent-repo` skill で行う
 - 導入・再適用される共有構成の配布元は `.agents/skills/bootstrap-agent-repo/assets/templates/`
+- 導入先 repo の root `README.md` は配布対象外とし、bootstrap では作成・上書きしない
+- `docs/agent/PROJECT_CONTEXT.md` は未作成時だけ作成され、再適用時は `preserve` として上書きしない
 - リスクのある設定は `.example` をコピーして有効化する
 
 ## 最初に整えること
 
 以下は、`bootstrap-agent-repo` で共有構成を導入・再適用した導入先 repo で行う初期調整です。
+repo 固有コンテキストは `docs/agent/PROJECT_CONTEXT.md` に集約し、共通規約や adapter には重複して書かないでください。
 
-1. `AGENT_RULES.md` を技術スタックとチーム運用に合わせて具体化する
-2. `docs/agent/OWNERSHIP.md` の repository consumers と ownership matrix を repo 用に更新する
-3. `docs/agent/AGENT_ROLES.md` で agent / human の責務を割り当てる
-4. `.codex/config.toml` と `.claude/settings.json.example` を環境に合わせて調整する
-5. `.mcp.json.example` の必要部分だけ有効化する
-6. `plans/template.md` を使って最初の案件 plan を起こす
-7. multi-agent work 前に `docs/agent/COORDINATION_GATE.md` と `docs/agent/HANDOFF_PROTOCOL.md` を確認する
+1. `docs/agent/PROJECT_CONTEXT.md` に repo 固有コンテキストを記録する
+2. `AGENT_RULES.md` は共通規約の正本として扱い、repo 固有コンテキストは書かない
+3. `docs/agent/OWNERSHIP.md` の repository consumers と ownership matrix を repo 用に更新する
+4. `docs/agent/AGENT_ROLES.md` で agent / human の責務を割り当てる
+5. `.codex/config.toml` と `.claude/settings.json.example` を環境に合わせて調整する
+6. `.mcp.json.example` の必要部分だけ有効化する
+7. `plans/template.md` を使って最初の案件 plan を起こす
+8. multi-agent work 前に `docs/agent/PROJECT_CONTEXT.md`, `docs/agent/COORDINATION_GATE.md`, `docs/agent/HANDOFF_PROTOCOL.md` を確認する
+
+`docs/agent/PROJECT_CONTEXT.md` には導入先 repo のデータ取扱方針を書く。共有すべきでない値そのものは書かない。
 
 ## Bootstrap script
 
 AI エージェントまたは保守者が bootstrap script を直接実行する場合:
+
+初回適用:
 
 ```bash
 python3 .agents/skills/bootstrap-agent-repo/scripts/bootstrap.py --target . --dry-run
 python3 .agents/skills/bootstrap-agent-repo/scripts/bootstrap.py --target . --yes
 ```
 
-既存 repo に古い `bootstrap-agent-repo` 更新を再適用する場合:
+既存 repo に標準構成を再適用する場合:
 
 ```bash
 python3 .agents/skills/bootstrap-agent-repo/scripts/bootstrap.py --target . --dry-run
@@ -129,6 +148,12 @@ python3 .agents/skills/bootstrap-agent-repo/scripts/bootstrap.py --target . --fo
 python3 .agents/skills/bootstrap-agent-repo/scripts/bootstrap.py --target . --dry-run
 ```
 
-再適用後は、`.agents/bootstrap-backups/<timestamp>/` と更新後ファイルを必ず比較し、repo 固有情報が汎用文書で消えていないか確認する。`--check-root-sync` が失敗しても、root 側だけに残す意図的な repo 固有差分であれば、plan や docs に明記して運用する。
+再適用前の dry-run で、`docs/agent/PROJECT_CONTEXT.md` が `preserve` と表示されることを確認する。このファイルは project-owned file であり、`--force` でも上書きされない。
+
+再適用前後の dry-run で、root `README.md` が create / overwrite 対象に含まれないことを確認する。導入先 repo の `README.md` は project-owned file であり、bootstrap は作成・上書きしない。
+
+`--force --backup` は template-owned files の差分を更新するために使う。再適用後は、`.agents/bootstrap-backups/<timestamp>/` と更新後ファイルを比較し、意図しない上書きがないことを確認する。
+
+`--check-root-sync` が `PROJECT_OWNED_DIFF docs/agent/PROJECT_CONTEXT.md` を報告する場合は、project-owned content drift として許容する。その他の `DIFF` は template repo のメンテナンス対象として扱う。
 
 詳細な再適用手順は `.agents/skills/bootstrap-agent-repo/references/USAGE.md` と `.agents/skills/bootstrap-agent-repo/references/POST_BOOTSTRAP_CHECKLIST.md` を参照する。

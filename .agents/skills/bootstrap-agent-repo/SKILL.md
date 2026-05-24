@@ -24,10 +24,10 @@ Codex と Claude Code の AI agent 協調コーディング用テンプレート
 1. 必要な詳細だけ `references/USAGE.md` と `references/LAYOUT.md` で確認する
 2. まず dry-run する: `python3 .agents/skills/bootstrap-agent-repo/scripts/bootstrap.py --target . --dry-run`
 3. 問題なければ適用する: `python3 .agents/skills/bootstrap-agent-repo/scripts/bootstrap.py --target . --yes`
-4. 既存ファイルを更新する場合だけ `--force --backup` を追加する
+4. 既存ファイルを更新する場合だけ、root `README.md` が対象に含まれないことを dry-run で確認してから `--force --backup` を追加する
 5. テンプレート保守時は `--check-root-sync` で root と `assets/templates/` の同期を確認する
-6. `references/POST_BOOTSTRAP_CHECKLIST.md` に従って repo 固有値を調整する
-7. Bootstrap 後に `docs/agent/OWNERSHIP.md` を確認する
+6. `references/POST_BOOTSTRAP_CHECKLIST.md` に従い、repo 固有コンテキストは `docs/agent/PROJECT_CONTEXT.md` に集約する
+7. Bootstrap 後に `docs/agent/PROJECT_CONTEXT.md` と `docs/agent/OWNERSHIP.md` を確認する
 8. Multi-agent work の前に placeholder agent roles を割り当てるか置き換える
 9. Parallel coding の前に `docs/agent/COORDINATION_GATE.md` と `docs/agent/HANDOFF_PROTOCOL.md` を確認する
 10. root files と `assets/templates/` を同期した状態に保つ
@@ -35,6 +35,7 @@ Codex と Claude Code の AI agent 協調コーディング用テンプレート
 ## Notes
 
 - デフォルトでは既存ファイルを上書きしない
+- 導入先 repo の root `README.md` は作成・上書きしない
 - source tree 内の symlink はコピーせず拒否する
 - `assets/templates/` が展開されるテンプレート本文
 - この skill 自体は `.agents/skills/bootstrap-agent-repo/` に自己インストールされる

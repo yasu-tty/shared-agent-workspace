@@ -12,6 +12,7 @@ Use this inventory before changing files. Keep the ownership areas aligned with 
 | `docs/agent/HANDOFF_PROTOCOL.md` | Work start, progress, completion, and conflict protocol | Handoff process | All agents | High | Required for multi-agent or cross-boundary work |
 | `docs/agent/COORDINATION_GATE.md` | Plan-time agent availability, execution mode, parallel control, file ownership, locked files, and routing record | Planning process / coordination governance | Planning agent / review agent | High | Use with `.agents/PLANS.md`, ownership, roles, and handoff docs before implementation |
 | `docs/agent/COMPONENT_INVENTORY.md` | Component map and risk levels | Shared documentation | Documentation agent | Medium | Keep ownership areas consistent with this table |
+| `docs/agent/PROJECT_CONTEXT.md` | Project-owned context, data-handling policy, and repo-specific operating constraints | Project context | Adopting repository maintainer | High | Created by bootstrap when missing; preserved on reapply and never overwritten |
 | `docs/agent/SETUP.md` | Setup and activation guide | Onboarding | Documentation agent | Medium | Check after changing bootstrap or adapters |
 | `docs/agent/TESTING_POLICY.md` | Testing and validation expectations | Quality process | Test and quality agent | High | Required before changing test strategy |
 | `.agents/skills/bootstrap-agent-repo/` | Canonical bootstrap skill and template source | Bootstrap template | Template maintenance agent | High | Keep root files and `assets/templates/` synchronized |
@@ -20,13 +21,14 @@ Use this inventory before changing files. Keep the ownership areas aligned with 
 | `.codex/` | Codex project config, hooks, and agents | Codex adapter | Codex maintainer | Medium | Adapter only; shared policy belongs in `.agents/` or `docs/agent/` |
 | `CLAUDE.md` | Claude Code entry adapter | Claude adapter | Claude maintainer | Medium | Keep thin; use `@` references to shared docs |
 | `.claude/` | Claude settings, rules, agents, and skill adapters | Claude adapter | Claude maintainer | Medium | Shared skills remain canonical under `.agents/skills/` |
-| `.mcp.json.example` | Shared MCP example | Tooling example | Human maintainer | Medium | Do not place secrets in shared examples |
+| `.mcp.json.example` | Shared MCP example | Tooling example | Human maintainer | Medium | Do not place non-shareable values in shared examples |
 | `templates/nonshared/` | User-home, project-local, or admin-only examples | Nonshared samples | Local user / admin | Low | Copy only what is needed; do not enable by default |
 | `scripts/hooks/` | Optional hook scripts used by adapters | Tooling / quality | Tooling owner | Medium | Check hook side effects before enabling |
 
 ## Component categories
 
-- Shared components: `AGENT_RULES.md`, `.agents/`, `plans/`, `docs/agent/`, and `.mcp.json.example`.
+- Shared components: `AGENT_RULES.md`, `.agents/`, `plans/`, `docs/agent/` except project-owned files, and `.mcp.json.example`.
+- Project-owned shared components: `docs/agent/PROJECT_CONTEXT.md`; commit it in the adopting repository, read it before work, and keep non-shareable values out of it.
 - Feature-specific components: project-specific source, tests, and docs added by adopting repositories; define their ownership in `docs/agent/OWNERSHIP.md`.
 - Adapter components: `AGENTS.md`, `CLAUDE.md`, `.codex/`, and `.claude/`; keep these thin and point back to shared components.
 - High-risk components: shared policy, plan specification, ownership docs, handoff protocol, testing policy, bootstrap script/assets, public contracts, schema, auth, billing, deployment, and CI.
@@ -44,6 +46,9 @@ Use this inventory before changing files. Keep the ownership areas aligned with 
 
 - `docs/agent/`
   setup, inventory, coordination gate, testing policy などの補助資料
+
+- `docs/agent/PROJECT_CONTEXT.md`
+  導入先 repo が管理する共有コンテキスト。bootstrap は未作成時に作成するが、再適用時は上書きしない
 
 - `.agents/skills/bootstrap-agent-repo/`
   startup / bootstrap 用の canonical skill

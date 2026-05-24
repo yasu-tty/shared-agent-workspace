@@ -16,7 +16,7 @@
 - Python 3 が使えること
 - repo ルートから実行すること
 - canonical source は `.agents/skills/bootstrap-agent-repo/` にあること
-- multi-agent work の前に `docs/agent/OWNERSHIP.md` と `docs/agent/HANDOFF_PROTOCOL.md` を確認すること
+- multi-agent work の前に `docs/agent/PROJECT_CONTEXT.md`, `docs/agent/OWNERSHIP.md`, `docs/agent/HANDOFF_PROTOCOL.md` を確認すること
 
 ## 基本的な使い方
 
@@ -32,7 +32,7 @@ python3 .agents/skills/bootstrap-agent-repo/scripts/bootstrap.py --target . --dr
 python3 .agents/skills/bootstrap-agent-repo/scripts/bootstrap.py --target . --yes
 ```
 
-既存ファイルをテンプレートで更新する場合だけ、backup 付きで強制適用します。
+既存ファイルをテンプレートで更新する場合だけ、dry-run で `docs/agent/PROJECT_CONTEXT.md` が `preserve` と表示されることを確認してから、backup 付きで強制適用します。
 
 ```bash
 python3 .agents/skills/bootstrap-agent-repo/scripts/bootstrap.py --target . --force --backup --yes
