@@ -8,9 +8,26 @@ This gate does not route work automatically. It does not enable hooks, create lo
 
 `multi_agent = true` means the repo may support multi-agent collaboration. It is not permission for parallel execution.
 
+## File-changing task gate
+
+For file-changing work, create or update `plans/*.md` before the first non-plan file edit. Updating an existing active plan is acceptable when the work is clearly within that plan's scope.
+
+The default exceptions are read-only investigation, creating or updating the plan itself, and validation commands that do not modify files. Docs-only edits, formatter writes, generated-file updates, and tiny one-file fixes are not exceptions when they change files.
+
 ## Plan-time record
 
-Every broad, risky, or cross-directory plan must include `## Routing and execution` and record:
+Every plan that gates file-changing work must include `## Agreement summary`, `## Agreement matrix`, `## Decision log`, `## Routing and execution`, and `## Work file activity`.
+
+The agreement sections must record:
+
+- Overall agreement state
+- Blocking unresolved decisions
+- Required approvers / reviewers
+- Matrix status
+- Agreement matrix rows for current proposed, agreed, rejected, blocked, or superseded decisions
+- Decision log entries for explicit user / human maintainer decisions
+
+`## Routing and execution` must record:
 
 - Available agents:
   - Codex: `available`, `unavailable`, or `unknown`
@@ -34,6 +51,7 @@ Every broad, risky, or cross-directory plan must include `## Routing and executi
 - Handoff checkpoint
 - Conflict resolution owner
 - Reason for routing decision
+- Work file activity rows for active, paused, handoff-ready, reviewing, validating, done, or blocked work
 
 ## Execution modes
 
@@ -62,10 +80,18 @@ Before editing any non-plan file, confirm that the active plan is executable. A 
 - primary executor is `None`, blank, or undecided
 - planned files are blank or do not identify the non-plan files to edit
 - locked files include the target non-plan files and the plan does not record an explicit unlock decision
+- `Blocking unresolved decisions` is not `None`
+- Agreement matrix has an unresolved row with `Blocks implementation: yes`
+- an owner decision required for implementation is still unresolved
+- `Matrix status` is `needs-update`
+- `Matrix status` is `not-yet-backfilled`
+- `Matrix status` is `omitted-by-user` without explicit user / human maintainer evidence for omitting it
+
+The agreement gate is intentionally minimal here. The detailed Agreement matrix, Decision log, row state, matrix status, and evidence rules live in `.agents/PLANS.md`.
 
 If a non-executable plan receives an ambiguous instruction such as "Implement the plan", do not edit non-plan files. First confirm the exact implementation scope and update the plan with execution mode, primary executor, planned files, locked files, validation, and rollback.
 
-If the user explicitly names a plan and asks to start implementation, record that approval in the plan before editing shared policy, templates, source files, or other non-plan files.
+If the user explicitly names a plan and asks to start implementation, record that approval in the plan before editing shared policy, templates, source files, or other non-plan files. For plans that use agreement tracking, record the approval in Status notes, Decision log or Progress log, and Work file activity as appropriate.
 
 ## Availability rules
 
@@ -96,6 +122,7 @@ Parallel execution is forbidden or must be limited to `separate-worktrees-only` 
 - the worktree has unrelated uncommitted changes
 - any agent availability is `unknown`
 - conflict risk is High
+- Agreement matrix has unresolved blocking decisions
 - rollback path is unclear
 
 Use `parallel-isolated` only when planned files are separated, locked files are respected, worktree state is safe, and the plan records file ownership for each agent.
@@ -148,6 +175,7 @@ Locked files:
 - Codex implements, then Claude Code reviews after the plan handoff checkpoint is updated.
 - Claude Code updates `.claude/*` while Codex updates `.codex/*`, with no shared files and no root/template sync.
 - Codex creates the plan only because Claude Code availability is unknown.
+- Codex records an explicit implementation approval in the plan before editing shared policy or template files.
 
 ## Unsafe examples
 
@@ -156,3 +184,5 @@ Locked files:
 - One agent validates while another continues editing the same files.
 - A plan assigns work to Claude Code when Claude Code availability is unknown.
 - A plan selects parallel execution for `AGENT_RULES.md` or `.agents/PLANS.md`.
+- An agent infers `agreed` from existing policy or from the absence of unresolved questions.
+- An agent edits non-plan files while `Matrix status` is `needs-update`.
