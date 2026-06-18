@@ -27,6 +27,7 @@ File-changing task gate:
   - Scope and planned / locked files:
   - Routing and execution:
   - Work file activity:
+  - Review findings:
   - Rollback notes:
   - Validation:
 - Historical surfaces preserved unless factually wrong:
@@ -94,6 +95,13 @@ No user / human maintainer decision recorded yet.
 | ID | Actor | Role | Task | Files / paths | Operation | Status | Conflict risk | Last update | Next action |
 |---|---|---|---|---|---|---|---|---|---|
 | WF-01 |  | Planner |  |  | inspect | planned |  |  |  |
+
+## Review findings
+
+No review findings recorded yet.
+
+| ID | Reviewer / source | Finding | Decision / status | Required action or rationale | Owner / next actor | Target files / paths | Validation / handoff result |
+|---|---|---|---|---|---|---|---|
 
 ## Discovery
 - Related files:

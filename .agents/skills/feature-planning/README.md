@@ -11,7 +11,9 @@
 - public API、schema、auth、billing、deployment、CI、shared component に影響する変更を扱う
 - Codex と Claude Code の役割分担、handoff、parallel execution の可否を記録する
 - 既存 plan の status、progress log、validation notes を更新する
-- Agreement summary / matrix、Decision log、Work file activity を整理する
+- Agreement summary / matrix、Decision log、Work file activity、Review findings を整理する
+- review feedback / review result を受け取る、または対象 plan のレビュー結果を作成し、findings、対応判断、次担当、validation / handoff 状態を active plan / checkpoint に記録する
+- context compaction、session resume、handoff、scope expansion、validation 開始後に、active plan / checkpoint から作業状態を復元する
 
 既定で許可する例外は、read-only の調査、`plans/*.md` の作成または更新そのもの、ファイルを書き換えない検証コマンドだけです。docs-only、formatter、生成物更新、小さな1ファイル修正であっても、ファイルを書き換える場合は plan を作成または更新します。
 
@@ -24,13 +26,16 @@
 
 ## 基本的な使い方
 
-1. 関連するコード、設定、文書、既存 plan を調査します。
-2. `plans/template.md` を基に `plans/YYYY-MM-short-name.md` を作成します。
-3. `## Status`、`## Agreement summary`、`## Agreement matrix`、`## Decision log`、`## Scope` を埋めます。
-4. `## Ownership and coordination`、`## Routing and execution`、`## Work file activity`、`## Validation` を埋めます。
-5. agent availability、execution mode、parallel execution allowed、file ownership claims、locked files を記録します。
-6. `State` を変更するときは、Summary、Status、Agreement summary / matrix、Routing、Work file activity、Rollback、Validation が新しい現在状態と矛盾しないか確認します。
-7. 実装中の発見や handoff は `## Progress log` に追記します。
+1. 既存作業の再開・移行・handoff では、active plan / checkpoint から current actor、participating agents、target files、locked files、completed work、current status、next action、unresolved decisions、blockers、review findings、validation results、handoff checkpoint、last updated information を先に復元します。
+2. 現在の trigger に必要な reference だけを読みます。新規 plan 作成や material update では `.agents/PLANS.md`、`plans/template.md`、関連する ownership / coordination / handoff docs を確認します。
+3. 関連するコード、設定、文書、既存 plan を調査します。
+4. `plans/template.md` を基に `plans/YYYY-MM-short-name.md` を作成します。
+5. `## Status`、`## Agreement summary`、`## Agreement matrix`、`## Decision log`、`## Scope` を埋めます。
+6. `## Ownership and coordination`、`## Routing and execution`、`## Work file activity`、`## Review findings`、`## Validation` を埋めます。
+7. agent availability、execution mode、parallel execution allowed、file ownership claims、locked files を記録します。
+8. `State` を変更するときは、Summary、Status、Agreement summary / matrix、Routing、Work file activity、Review findings、Rollback、Validation が新しい現在状態と矛盾しないか確認します。
+9. review feedback / review result を受け取る、または対象 plan のレビュー結果を作成する場合は、`## Review findings`、`## Work file activity`、`## Progress log`、`## Validation`、`## Routing and execution` の `Handoff checkpoint` field の該当箇所に、findings、採用/見送り/保留、対応要否、次担当、validation / handoff 状態を記録します。ユーザーが read-only review only を明示した場合は、PLAN 更新を行わず、その制約を応答に明記します。
+10. 実装中の発見や handoff は `## Progress log` に追記します。
 
 ## Codex / Claude Code 向け配置方法
 
@@ -57,5 +62,6 @@ Claude Code 向けには、adapter を `.claude/skills/feature-planning/` に配
 - `multi_agent = true` は parallel execution の自動許可ではありません。
 - agent availability が不明な場合は、plan 作成時に確認して記録してください。
 - `Draft`、`planning-only`、unresolved blocking decisions、または locked target files が残る plan は実装可能として扱いません。
+- 会話履歴だけを現在状態の正本にせず、再開・handoff・validation 時は active plan / checkpoint を読み直してください。
 - Decision log と Progress log は履歴です。State 変更時は、有効な履歴を書き換えず、Summary や Agreement summary など現在状態を表す section を更新してください。
 - 実装完了後も review、validation、commit、merge が残る場合は `State: Completed` ではなく `State: Implementation complete` を使います。

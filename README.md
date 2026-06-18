@@ -48,7 +48,7 @@
 
 ## 入口として見る場所
 
-作業時の共通参照順は `AGENT_RULES.md` を正とする。初回理解の入口として、以下を確認する。
+作業時の core rules と workflow rehydration の正本は `AGENT_RULES.md` です。初回理解の入口として、以下を確認する。
 
 - `AGENT_RULES.md`
 - `AGENTS.md`

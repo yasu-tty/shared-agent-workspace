@@ -16,7 +16,7 @@
 
 - shared rules は `AGENT_RULES.md` と `.agents/PLANS.md` を正とする
 - repo 固有コンテキストは `docs/agent/PROJECT_CONTEXT.md` を確認する
-- 複雑な変更では、先に `plans/*.md` を作成または更新する
+- ファイルを変更する作業では、最初の non-plan file 編集前に `plans/*.md` を作成または更新する
 - 計画書の形式は `.agents/PLANS.md` に従う
 - Plan status rules are defined in `.agents/PLANS.md`; `Completed` はレビュー、検証、commit / merge まで終わった場合だけ使う
 - Plan 作成時は `docs/agent/COORDINATION_GATE.md` に従い、agent availability と execution mode を確認・記録する

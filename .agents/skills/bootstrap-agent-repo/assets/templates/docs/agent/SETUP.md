@@ -2,7 +2,7 @@
 
 ## 1. この文書の位置づけ
 
-この文書は初期有効化ガイドである。作業時の共通参照順は `AGENT_RULES.md` の「作業時の共通参照順の正本」を正とする。
+この文書は初期有効化ガイドである。作業時の core rules と workflow rehydration は `AGENT_RULES.md` の「作業時の core rules と workflow rehydration」を正とする。
 
 ## 2. 安全な初期有効化
 
